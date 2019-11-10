@@ -3,16 +3,20 @@
 <body>
 
 <h1>My First Heading</h1>
-<p>read file</p>
+<h2>read file</h2>
 <input type="button" value="Read" onclick="OnReadClick()"/>
 <div><textarea id="readarea"></textarea></div>
-<p>write file</p>
+<h2>write file</h2>
   <div><input type="button" value="Write" onclick="OnWriteClick()"/></div>
   <div>summary: <input type="text" id="summary"></div>
   <div>location: <input type="text" id="location"></div>
   <div>description: <input type="text" id="description"></div>
   <div>start: <input type="datetime-local" id="start"></div>
   <div>end: <input type="datetime-local" id="end"></div>
+<h2>time line</h2>
+<div style="width:75%;">
+		<canvas id="myChart"></canvas>
+</div>	
 </body>
 </html>
 <script>
@@ -39,6 +43,60 @@ function OnWriteClick() {
         console.log(text);
     });
 }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/locale/ja.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+<script>
+  var ctx = document.getElementById("myChart");
+    function newDate(day, month) {
+        return moment().date(day).month(month);
+    }
+
+
+var data = {
+    labels: [newDate(2019,11,8,1,1,1), newDate(2019,11,8,2,1,1), new Date(2019,11,8,3,1,1), new Date(2019,11,8,4,1,1), new Date(2019,11,8,5,1,1), new Date(2019,11,8,6,1,1), new Date(2019,11,8,7,1,1), new Date(2019,11,8,8,1,1), new Date(2019,11,8,9,1,1)],
+    datasets: [
+        {
+            fill: false,
+            data: [140, 180, 150, 150, 180, 150, 150, 150, 170],
+            lineTension: 0,
+        },
+        {
+            fill: false,
+            data: [80, 100, 80, 80, 80, 80, 100, 80, 100],
+            lineTension: 0,
+        }
+    ]
+};
+var options = {
+    scales: {
+        xAxes: [{
+            ticks: {
+                autoSkip : false,
+                callback: function(value, index, values) {
+                    return new moment(value).format('DD hh:mm:ss');
+                }
+            },
+            gridLines : {
+                display : false,
+            }
+        }],
+        yAxes: [{
+            ticks: {
+                min: 50,
+                max: 190,
+               stepSize: 10
+            }
+        }],
+    },
+};
+var myLineChart = new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: options
+});
 </script>
 <style>
 textarea {
