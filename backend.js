@@ -39,7 +39,7 @@ app.get('/write', (req, res) => {
 app.get('/read', (req, res) => {
     const ical = require('ical')
     var moment = require('moment')
-    var data = ical.parseFile("./schedule3.ics")
+    var data = ical.parseFile("./schedule.ics")
     var array = []
     
     for (var k in data) {

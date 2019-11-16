@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+  <head>
+      <script data-require="jquery@*" data-semver="3.1.1" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  </head>
 <body>
 
 <h1>My First Heading</h1>
@@ -8,15 +11,65 @@
 <div><textarea id="readarea"></textarea></div>
 <h2>write file</h2>
   <div><input type="button" value="Write" onclick="OnWriteClick()"/></div>
-  <div>summary: <input type="text" id="summary"></div>
-  <div>location: <input type="text" id="location"></div>
+  <div><input type="button" value="Add" onclick="OnAddClick()"/></div>
+  <div>summary: <input type="text" id="summary" value="( 予定 )"></div>
+  <div>location: <input type="text" id="location" value="( 場所 )"></div>
   <div>description: <input type="text" id="description"></div>
   <div>start: <input type="datetime-local" id="start"></div>
   <div>end: <input type="datetime-local" id="end"></div>
 <h2>time line</h2>
-<div style="width:75%;">
-    <svg id="gantt"></svg>
-</div>	
+<button id="file_read_button" class="favorite styled" type="button">
+  Add to favorites
+</button>
+<div class="table-area">
+  <table>
+    <thead>
+      <tr>
+        <th>someDate</th>
+        <th id="8oclock">8:00</th>
+        <th id="9oclock">9:00</th>
+        <th id="10oclock">10:00</th>
+        <th id="11oclock">11:00</th>
+        <th id="12oclock">12:00</th>
+        <th id="13oclock">13:00</th>
+        <th id="14oclock">14:00</th>
+        <th id="15oclock">15:00</th>
+        <th id="16oclock">16:00</th>
+        <th id="17oclock">17:00</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>someDateVal1</td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+      </tr>
+      <tr>
+        <td>someDateVal2</td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+        <td class="data-cell"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div id="area">
+  </div>
+</div>
 </body>
 </html>
 <script>
@@ -43,9 +96,16 @@ function OnWriteClick() {
         console.log(text);
     });
 }
+
+function OnAddClick() {
+    const params = { summary: document.getElementById("summary").value, 
+                     location: document.getElementById("location").value, 
+                     description: document.getElementById("description").value, 
+                     start: document.getElementById("start").value, 
+                     end: document.getElementById("end").value };
+    
+}
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.3.0/frappe-gantt.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.3.0/frappe-gantt.min.css">
 <script>
   var tasks = [
   {
@@ -60,32 +120,159 @@ function OnWriteClick() {
   {
     id: 'Task 1',
     name: 'Redesign website 2',
-    start: '2019-11-10 11:00:00',
-    end: '2019-11-10 16:00:00',
+    start: '2019-11-09 11:00:00',
+    end: '2019-11-09 16:00:00',
     progress: 100,
     dependencies: '',
     custom_class: 'bar-milestone' // optional
   },
   ]
+</script>
+<script>
+ $(function() {
 
-  var gantt = new Gantt("#gantt", tasks, {
-    header_height: 50,
-    column_width: 30,
-    step: 24,
-    view_modes: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month'],
-    bar_height: 20,
-    bar_corner_radius: 3,
-    arrow_curve: 5,
-    padding: 18,
-    view_mode: 'Day',   
-    date_format: 'YYYY-MM-DD hh:mm:ss',
-    custom_popup_html: null
+  
+    
+var counter = 0;
+const margin = 5
+
+addSchedule("aaaa", "bbb", "ccc", "2019-11-09 10:00:00", "2019-11-09 14:00:00")
+
+
+
+$("#file_read_button").click(function() {
+                             addSchedule($("#summary").val(), 
+                                         $("#location").val(),
+                                         $("#description").val(),
+                                         $("#start").val(),
+                                         $("#end").val())
+                                         });
+
+  function addSchedule(summary, location, description, start, end){
+    //divの最後にpタグを追加
+    console.log("aaa");
+       $('#area').append($('<div>', { id: counter, class:'table-area-selected', text: summary + "  @" + location }));
+       $('#' + counter.toString() ).each(function(i, selected) {
+        var isDragging = false;
+        var $cells = $('table').find('.data-cell');
+        
+        var $currentCell = $($cells[0]);
+        
+        //$(selected).css('height', $currentCell.outerHeight() - 2); // fiddle factor
+        $(selected).css('height', 40);
+        $(selected).css('top', $currentCell.position().top + (40 + margin) * counter);
+        //$(selected).css('left', $currentCell.position().left);
+
+        var startTime = new Date(start);
+        console.log(startTime.getHours());
+
+        var hourNum = startTime.getHours();
+        var hour = hourNum >= 8 && hourNum < 18 ? hourNum : 8;
+        var id = '#' + hour.toString() + 'oclock';
+        $(selected).css('left', $('table').find(id).position().left);
+
+        var cellWidth = $currentCell.outerWidth();
+        
+        var colSpan = 0.5;
+        var endTime = new Date(end);
+        colSpan = endTime.getHours() - startTime.getHours();
+        console.log(colSpan)
+        $(selected).css('width', cellWidth * colSpan);
+
+        // drag start
+        $(selected).mousedown(dragStart);
+      
+        // drag end
+        $(window).mouseup(dragEnd);
+      
+        // drag over cells
+        $cells.mouseenter(draggingIntoNewCell);
+        $(selected).mousemove(draggingInSelectedCell);
+      
+        $(selected).dblclick(function(){
+            alert("double clicked");
+          });
+      
+        function dragStart() {
+          isDragging = true;
+        }
+      
+        function dragEnd() {
+          isDragging = false;
+        }
+      
+        function draggingIntoNewCell() {
+          $currentCell = $(this);
+          reposition($currentCell);
+        }
+      
+        // find if we've moved into the next column under this selection
+        function draggingInSelectedCell(e) {
+          if (isDragging) {
+            // find relative position within selection div
+            var relativeXPosition = (e.pageX - $(this).offset().left);
+      
+            if (relativeXPosition > cellWidth) { // moved into next column
+              $currentCell = $currentCell.next();
+              reposition($currentCell);
+            }
+          }
+        }
+      
+        function reposition($cell) {
+          // only reposition if not the last cell in the table (otherwise can't span 2 cols)    
+          if (isDragging && $cell.next().hasClass('data-cell')) {
+            //$(selected).css('top', $cell.position().top);
+            $(selected).css('left', $cell.position().left);
+          }
+        }
+
+    });
+
+    counter += 1;
+    console.log(counter);
+  };
+
+  
+
 });
-gantt.change_view_mode('Day')
 </script>
 <style>
 textarea {
   width: 700px;
   height: 100px
 }
+table td {
+    padding: 100px 80px;
+    border: 1px solid #cecece;
+    position: relative;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;  
+  }
+
+  table thead th {
+    /*padding: 10px 50px;*/
+    border: 1px solid #cecece;
+    text-align: left;
+    /*position: relative;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    */  
+  }
+
+  .table-area-selected {
+    position: absolute;
+    background: yellow;
+    border: 1px solid blue;
+    cursor: pointer;
+  }
+
+  .table-area-selected2 {
+    position: absolute;
+    background: red;
+    border: 1px solid blue;
+    cursor: pointer;
+  }
 </style>
