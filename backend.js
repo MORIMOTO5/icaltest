@@ -39,7 +39,7 @@ app.get('/write', (req, res) => {
 app.get('/read', (req, res) => {
     const ical = require('ical')
     var moment = require('moment')
-    var data = ical.parseFile("./schedule.ics")
+    var data = ical.parseFile("./multi_schedule.ics")
     var array = []
     
     for (var k in data) {
@@ -72,8 +72,10 @@ app.get('/read', (req, res) => {
                 console.log()
 
                 result['title'] = title;
-                result['start'] = startDate.format('MMMM Do YYYY, h:mm:ss a')
-                result['end'] = endDate.format('MMMM Do YYYY, h:mm:ss a')
+                //result['start'] = startDate.format('MMMM Do YYYY, h:mm:ss a')
+                //result['end'] = endDate.format('MMMM Do YYYY, h:mm:ss a')
+                result['start'] = startDate.format()
+                result['end'] = endDate.format()
                 result['location'] = event.location
             }
     
@@ -154,8 +156,10 @@ app.get('/read', (req, res) => {
                         console.log();
 
                         result['title'] = title;
-                        result['start'] = startDate.format('MMMM Do YYYY, h:mm:ss a')
-                        result['end'] = endDate.format('MMMM Do YYYY, h:mm:ss a')
+                        //result['start'] = startDate.format('MMMM Do YYYY, h:mm:ss a')
+                        //result['end'] = endDate.format('MMMM Do YYYY, h:mm:ss a')
+                        result['start'] = startDate.format()
+                        result['end'] = endDate.format()
                         result['location'] = event.location
                     }
     

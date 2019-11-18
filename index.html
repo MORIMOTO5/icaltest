@@ -7,11 +7,11 @@
 
 <h1>My First Heading</h1>
 <h2>read file</h2>
-<input type="button" value="Read" onclick="OnReadClick()"/>
+<input type="button" id="read" value="Read" />
 <div><textarea id="readarea"></textarea></div>
 <h2>write file</h2>
-  <div><input type="button" value="Write" onclick="OnWriteClick()"/></div>
-  <div><input type="button" value="Add" onclick="OnAddClick()"/></div>
+  <div><input type="button" id="write" value="Write"/></div>
+  <div><input type="button" id="add" value="Add"/></div>
   <div>summary: <input type="text" id="summary" value="( 予定 )"></div>
   <div>location: <input type="text" id="location" value="( 場所 )"></div>
   <div>description: <input type="text" id="description"></div>
@@ -73,40 +73,6 @@
 </body>
 </html>
 <script>
-
-function OnReadClick() {
-    fetch('http://localhost:3000/read')
-        .then(response => response.text())
-        .then(text => {
-        console.log(text);
-        document.getElementById("readarea").value = text;
-    });
-}
-
-function OnWriteClick() {
-    const params = { summary: document.getElementById("summary").value, 
-                     location: document.getElementById("location").value, 
-                     description: document.getElementById("description").value, 
-                     start: document.getElementById("start").value, 
-                     end: document.getElementById("end").value };
-    const qs = new URLSearchParams(params);
-    fetch(`http://localhost:3000/write?${qs}`)
-    .then(response => response.text())
-    .then(text => {
-        console.log(text);
-    });
-}
-
-function OnAddClick() {
-    const params = { summary: document.getElementById("summary").value, 
-                     location: document.getElementById("location").value, 
-                     description: document.getElementById("description").value, 
-                     start: document.getElementById("start").value, 
-                     end: document.getElementById("end").value };
-    
-}
-</script>
-<script>
   var tasks = [
   {
     id: 'Task 1',
@@ -136,7 +102,7 @@ function OnAddClick() {
 var counter = 0;
 const margin = 5
 
-addSchedule("aaaa", "bbb", "ccc", "2019-11-09 10:00:00", "2019-11-09 14:00:00")
+//addSchedule("aaaa", "bbb", "ccc", "2019-11-09 10:00:00", "2019-11-09 14:00:00")
 
 
 
@@ -233,7 +199,42 @@ $("#file_read_button").click(function() {
     console.log(counter);
   };
 
-  
+  $("#read").click(function() {
+    fetch('http://localhost:3000/read')
+        .then(response => response.text())
+        .then(text => {
+        console.log(text);
+        document.getElementById("readarea").value = text;
+
+        var obj = JSON.parse(text);
+
+        for(var i = 0; i < obj.length; i++)
+        {
+            console.log(obj[i].title);
+            console.log(obj[i].start);
+            console.log(obj[i].end);
+
+            addSchedule(obj[i].title, "bbb", "ccc", obj[i].start, obj[i].end)
+        }
+        
+        
+    });
+})
+
+$("#write").click(function()  {
+    const params = { summary: document.getElementById("summary").value, 
+                     location: document.getElementById("location").value, 
+                     description: document.getElementById("description").value, 
+                     start: document.getElementById("start").value, 
+                     end: document.getElementById("end").value };
+    const qs = new URLSearchParams(params);
+    fetch(`http://localhost:3000/write?${qs}`)
+    .then(response => response.text())
+    .then(text => {
+        console.log(text);
+    });
+})
+
 
 });
 </script>
